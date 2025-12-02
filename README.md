@@ -1,8 +1,8 @@
-Wanderlust – Full-Stack Airbnb-Style MERN Project
-
+<h1>Wanderlust – Full-Stack Airbnb-Style MERN Project</h1>
+<style="color:green">
 Wanderlust is a full-stack web application inspired by Airbnb, built using Node.js, Express, MongoDB, EJS, Cloudinary, Passport Authentication, and Mapbox Maps.
 The project includes CRUD listings, authentication, reviews, image uploads, form validation, flash messages, authorization, deployment, and full MVC architecture.
-
+</style>
 🚀 Tech Stack
 
 Backend: Node.js, Express.js
