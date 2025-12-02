@@ -1,0 +1,447 @@
+PART 1 BASIC SETUP: 
+
+1. npm init -y  
+2.npm i express/ejs/mongoose
+3.require express & mongoose, listen port,app.get => /
+4.async function main(){  link to mdb} 
+5. main .then , . catch 
+6.cmd administrator -> net start mongodb,shell
+-----------------------------------------------------------------
+________________
+MODEL:listing   |
+title           |
+description     |
+image           |
+price           |
+location        |
+country         |
+________________|
+7.required mongoose seperatedly , mongoose.schema 
+8.use schema , const ListingSchema = new Schema({});
+9.const Listing = mongoose.model('Listing', ListingSchema);    & export so can be used in another folder -> module.exports = Listing;
+-----------------------------------------------------------------------------------------------
+10.require listing.js in app.js 
+11.created get port for testlising -> added sampleListing = new listing{  ... . ... }  -> await sampleListing ->send response & console.log
+12. only after port activation the entry get into database 
+------------------------------------------------------------------------------------------------
+INITIALIZE TEMPORARY DATA TO DATABASE 
+13.create folder init-> add file data.js with raw data (array => sampleListing =[{}]; export it with name data )
+14.create index.js to send data to db ; require mongoose,.data.js ,  ../models/listing.js 
+15.run the index.js and check the data inside the db
+------------------------------------------------------------------------------------------------
+CREATING FIRST ROUTE TO PRINT DATA :
+16.created get /listings  (with listing.find({}) -> data can be achived ) 
+17.so created allListings & stored using async & render to index.js
+-----------------------------------------------------------------------------------------------
+READ:SHOW ROUTE :
+____________________________________________
+ { /listing/:id  print data for each id }   |
+____________________________________________|
+ 18. select id by req.params ->store listing by find by id & render to listings/show port 
+19. {  listing.price.toLocaleString("en-IN")  } add , at required space
+-----------------------------------------------------------------------------------------------
+CREATE :NEW & CREATE ROUTE 
+____________________________________
+GET /listing/new  ->form -> submit  |
+post /listings              <-|     |
+____________________________________|
+20.created form in a new.ejs with required fields button to submit method = post  action /listings
+21.app.post()
+--------------------------------------------------------------------------------------------------
+UPDATE :EDIT & UPDATE ROUTE:
+____________________________________________
+get -> listings/:id/edit ->edit form submit |
+____________________________________________|
+22.button in show.ejs using <a href="/listings/<%= listing._id %>/edit"> tag
+23.npm i method-override
+24.edit.js same as new.ejs  difference ?_method=PUT  
+-----------------------------------------------------------------------------------------------------
+DELETE : 
+25.button in show.ejs   <form method="post" action="/listings/<%= listing._id %>?_method=DELETE"><button type="submit">Delete</button>
+26.app.delete in app.js file const {id} = req.params => findelementbyidanddelete
+--------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------
+PART 2 STYLING :
+
+NAVBAR:
+27.npm i ejs-mate
+28.created folder layouts inside views ; created boilerplate.ejs ; html boiler with <div  class="container"><%- body%></div>
+29. for all ejs files removed html header ; added <% layout("/layouts/boilerplate")%> for each change in html file change will occur for all 
+30.created public/css/style.css in main directory ;link css with boilerplate.ejs 
+31.initialize bootstrap with script and link tag 
+32.created views/includes/navbars.ejs  added navbar code from bootstrap ; boilerplate.ejs -> <%- include(../loc)%>
+33changes -- removed all aria ; home -> / , All listings -> /listings , Add New Listings -> /listings/new 
+34. remove button for add new listings  
+35. navbar-expand-md bg-body-light ;added button of compass using font awesome ; font awesome cdn to get link ; paste into boilerplate
+------------------------------------------------------------------------------------------------------
+FOOTER:
+36.created footer.ejs in includes
+37.added div f-info inside that created 3 subdivs socials,brand,links 
+38.in style.css no text decoration to all links in main div and color for them ; hover effect of underline ;
+39. *display:flex  ; flex-wrap: wrap ; text-align: center ; height: 8rem ; background-color: #ebebeb ; justify-content: center ; align-items: space-evenly;
+40.* for each block  width: 100% ; display: flex ; align-items: center ; justify-content: center ;
+41. increase font-size and margin between icons
+------------------------------------------------------------------------------------------------------
+INDEX:
+42. change for loop for img name and price display
+43.let outer-class =row row-cols-lg-3 row-cols-md-3 row-cols-sm-1' ; 
+44. inside outerclass -> for loop .div with class col
+45.firstly removed border for cards and  set margin bottom 2rem ; for card img border radius width:100% object-fit:cover ; cardbody with padding 0 , text with font weight 400  ; import google font jakarta sans in boilerplate
+46.set all img height inside img class in index.ejs
+47.added div img-overlay under img tag in index.js ; make opacity 0 and for hover 0.2 bgcolor-white 
+------------------------------------------------------------------------------------------------------
+NEW INDEX:
+48.for both new.ejs & edit.ejs we use same template & formating
+49.we added all lable and input into single single divs then add outer div class row ; inside that div class="col-8 offset-2" {from 12 parts of screen use till 8 and from left skip 2 }
+50.for each class mb-3
+-----------------------------------------------------------------------------------------------------
+SHOW:
+51. external row mt-3 class ; internal class  col-8 offset-3 for heading  ;  internal class 2 card col-6 offset-3 show-card img , title,desc,price,loc,country
+52. div class btns ; anchor tag with class btn ; form with delete button  offset 3,4 col-1 
+-----------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------
+PART 3 :FORM VALIDATION:
+
+    client side validation ::when user is entering any data on site it must be completed and corrected so web server must check whether it is in correct format 
+    
+53.for edit and new listing in form we update the ui with bootstraps novalidate class="needs-validation" ;  added divs class="valid-feedback" & class="valid-feedback" for all  
+
+    serverside validation ::
+
+54. added error validation function ; added try catch block for create route 
+55.change the try catch block to wrapAsync 
+56.for create and update block // if(!req.body.listing){  throw new ExpressError(400 , "send a valid data!") } 
+57.error.ejs -> to popup message on error
+58.npm i joy ; created file schema.js and import & created module joy ; export in the app.js use -- listingSchema.validate(req.body);--  in create function   --let result = listingSchema.validate(req.body);  ;  if(result.error){throw new ExpressError(400 , result.error); }
+
+VALIDATIONFOR SCHEMA:
+
+59. created error.ejs in listings and validationSchema function in app.js & throwing error to avoid unnecessary error
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------phase 2 :PRODUCTION -----------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+NEW MODEL:REVIEW::
+
+comment
+rating(1-5)
+createdAt
+
+    60.created model review.js in models folder ; required mongoose created schema ; in listing.js created reviews with type schema.types.objectId ; and ref with review ; & export
+
+CREATE REVIEWS:
+1.creating form :
+    61.create review page in show.ejs ; bootstrap functionalities
+
+2.submitting the form :
+    62.POST method -> /listings/:id/reviews
+
+3. validate reviews/ show on /listing/:id
+
+    client side validation(form): 
+    server side validation(joi):
+
+    63.created a same schemaReviw in schema.js ; in app.js require it inside same fuunction  const { listingSchema, reviewSchema } = require('./schema.js');  ; created a validateReview function and send error using express  ; used this function as middleware inside listing/:id/review 
+
+  Render review:
+   64.in show.ejs created a seperate div for all review ; in row class added card-body ; h5 -> card title class  ; p card-text for both review.comment and review.rating 
+   65.in app.js usingpopulate to expand the listing on show.ejs 
+
+DELETING REVIEW:
+{ $pull }
+
+    66. delete review at : "/listings/<%= listing._id%>/reviews/<%=review._id%>  ; let {id , reviewId}= req.params; ; await Listing.findByIdAndUpdate(id, {$pull:{reviews:reviewId}}); ; await Review.findByIdAndDelete(reviewId); ; res.redirect(`/listings/${id}`);
+    
+--------------------------------------------------------------------------------------------------------------------------------------------------
+     _______________________________________________________________________________________________________
+    |   Express Router
+    |   Express Routers are a way to organize your Express application such that our primary app.js file
+    |   does not become bloated.
+    |   const router = express.Router( )  // creates new router object
+    |__________________________________________________________________________________________________________
+
+67.created routes directory added all /listing routes to it required express and export it to app.js  ; created /review.js added review routes change app.get to router.get ; /listings/:id/review to / required express and export the module 
+68. in app.js required both /listings and /lising/:id/reviews  ; for express router must define {mergeParams:true} ; removed unnecessary things from it 
+
+    __________________________________________________________________________________________________________
+    |   COOKIES:
+    |   
+    |       Web Cookies
+    |       HTTP cookies are small blocks of data created by a web server while a user is browsing a website and
+    |       placed on the user's computer or other device by the user's web browser.
+    |   
+    |           |    app.get('/cookies' , (req,res)=>{
+    |           |        res.cookie("greet", "hello");
+    |           |        res.send("cookies sent);
+    |           |    })
+    |   
+    |       cookies parser
+    |   
+    |   
+    |   
+    |       Signed Cookies
+    |   
+    |       |    Send Signed Cookie
+    |       |    app. use(cookieParser("secretcode")) ;
+    |       |    app. get ("/getsignedcookie", (req, res) => {
+    |       |    res.cookie("color", "red", { signed: true }) ;
+    |       |    res. send ("done!");
+    |       |    Verify Signed Cookie
+    |       |    app.get ("/verify", (req, res) => {
+    |       |    res. send ( req. signedCookies) ;
+    |       |    }) ;
+    |       | });
+    |   
+    |       What is State?
+    |           Stateful Protocol
+    |           Stateful Protocol require server to save the status and session information.
+    |           eg - ftp
+    |           Stateless Protocol
+    |           Stateless Protocol does not require the server to retain the server information or
+    |           eg - http
+    |   
+    |   
+    |   EXPRESS SESSIONS :
+    |       
+    |       >an attempt to make our session stateful
+    |   
+    |       |   using npm package
+    |       | //track number of sessions attended {count of sessions}
+    |       |   app. use (
+    |       |   session ({
+    |       |   secret : "mysupersecretcode",
+    |       |   resave: false,
+    |       |   saveUninitialized: true,
+    |       |   } )
+    |       |   ) ;
+    |   
+    |   connect-flash
+    |       The flash is a special area of the session used for storing messages. Messages are written to the flash and cleared after being displayed to the user.
+    |       (using sessions are compulsory)
+    |       {    >npm i connect-flash   ;   require(flash)   app.use(flash());       }
+    |   
+    |   
+    |   res.local
+    |       |    app. use( (req, res, next) => {
+    |       |    res. locals. messages = req. flash("success") ;
+    |       |    next () ;
+    |       |    });
+    |_____________________________________________________________________________________________________________________________          
+
+USING SESSIONS AND COOKIES IN PROJECT :
+
+69. >install express-session ; require sessions  ; created sessionOptions  ; use session  -> check in cokies for a connect.sid  
+70. >install connect-flash ; require flash ; use flash ; in listing.js for create new listing added flash ; in index.js at top added <%=success %>  to popup msg 
+71. created flash.ejs in includes and included in boilerplate added bootstrap animation class="alert alert-success "role="alert" 
+72. created same like success for failure 
+
+    ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    |    AUTHENTICATION VS AUTHORIZATION:
+    |
+    |        authentication-> process of verifying who someone is 
+    |        authorization-> authorization is process of verifying what specific applications,files and data a user has access to
+    |
+    |    storing password:
+    |
+    |        password-------------hashing function ---------------string
+    |        
+    |    HASHING:
+    |
+    |        For every input, there is a fixed output
+    |        They are one-way functions, we can't get input from output
+    |        For a different input, there is a different output but of same length
+    |        Small changes in input should bring large changes in output
+    |
+    |    SALTING:
+    |        Password salting is a technique to protect passwords stored in databases by adding a
+    |        string of 32 or more characters and then hashing them.
+    |
+    |    Passport:(library helps in authentication)
+    |        npm i passport    npm i passport-local    npm i passport-local-mongoose
+    |   
+    |   
+    |   User Model
+    |
+    |       user : username, password, email
+    |       You're free to define your User how you like. Passport-Local Mongoose will add a username,
+    |       hash and salt field to store the username, the hashed password and the salt value.
+    |       Additionally, Passport-Local Mongoose adds some methods to your Schema. See the API
+    |   
+    |   Configuring Strategy
+    |       passport.initialize( )
+    |           A middleware that initializes passport.
+    |       passport.session( )
+    |           A web application needs the ability to identify users as they browse from page to page. This series of requests and responses, each associated with the same user, is known as a session.passport.use(new LocalStrategy( User.authenticate( ) ))
+      
+
+73.installed ->npm i passport    npm i passport-local    npm i passport-local-mongoose
+74. required passport , localStratogy (passport-local) , user (./models/user.js)
+75. in app.js only after sessions we create middleware  passport.initialize() & passport.sessions
+76. creating a demo user app.get in app.js ; registered with register method  hashing method  #pbkdf2 
+
+SIGNUP USER :
+
+    GET /signup -> created users in views ; signup.ejs in users added boilerplate creatd form 
+
+    POST /signup -> router.post ; access for name,mail,pass ; required ../models/user.js ; in try catch block >> created new user ; pass newUser , password to registeredUser using await  ; log info ; flash msg ; redirect /listings
+
+LOGIN USER :
+
+    GET /login ->gives form to login 
+
+    POST /login ->checks whether user exists or not 
+
+    -----------------------------------------------
+    |   Connecting Login Route
+    |   How to check if User is Logged in?
+    |   req.isAuthenticated( ) // Passport method that automatically authenticate if user is logged in or not 
+    -----------------------------------------------
+
+77. created a middleware and used in all listing function  ; module.exports.isLoggedIn = (req,res,next)=>{     if(!req.isAuthenticated()){        req.flash("error", "you must be logged in to create listings");        return res.redirect('/login');    }    next();}
+    
+    ---------------------------------------------------------
+    |   Logout User
+    |       GET /logout
+    |           router. get("/logout", (req, res) => {
+    |           req. logout ( (err) => {
+    |               if (err) {
+    |               return next (err) ;
+    |           }
+    |           req. flash("success", "logged you out!") ;
+    |           res. redirect("/listings") ;
+    |           }) ;
+    |           }) ;
+    ----------------------------------------------------------------
+78. inuser.js >> router.get('/logout', (req,res,next)=>{>>      req.logout((err)=>{>>         if(err){>>            return next(err);>>         }>>         req.flash("success", "you are logged out now !");>>         res.redirect("/listings");>>      });>> });
+79. in navbars.ejs  created another div for signup login logout 
+
+    req.user -> undefined  ->not logged in  -> signup , login 
+            |-> obj ->logged in > log out
+    
+80.in app.js  >> res.locals.currentUser = req.user;  stored req.user to currentUser as locals can be accessed by ejs 
+81. {currently signup just store info to database so we must login after that but thats not good thing } >> in user.js in post route of signup we added >> req.login(registeredUser,  (err)=>{  if(err){                return next(err);   }        req.flash("success", "Welcome to wanderlust ");  res.redirect("/listings");     });
+82.{when we want to create new listing without login after login it passes to all lising not specific path user wants to go } so in middleware added   >> module.exports.saveRedirectUrl =(req,res,next)=>{      if(req.session.redirectUrl){          res.locals.redirectUrl = req.session.redirectUrl;      }      next();  }
+83. {due to accessing locals in the login if we directly try to login from login button then localstring is empty } ; hence  let redirectUrl = res.locals.redirectUrl  || "/listings";    res.redirect(redirectUrl);
+84.{for each post,review giving access of delete ,edit to owner only} ;  added OWNER property to the schema of listing model ;  map in index.js in init function to update all the databases with oowner >>    const listing = await Listing.findById(id).populate("reviews").populate("owner");
+85. display owner at the pages  listing.js > router.post >  newListing.owner = req.user._id; to get username ; show.ejs > owner: <%=listing.owner.username%>
+
+AUTHERIZATION:
+
+    authorization for listing:: 
+
+86. { listing owner ->   listing.owner._id    ; 
+      edit/delete ->     currentUser._id }
+      if(listing.owner._id === currentUser._id ){  show delete edit}
+
+87.in middleware created a middleware for a isOwner const { id } = req.params;     let listing = await Listing.findById(id);     if (!currentUser && listing.owner._id.equals(res.locals.currentUser._id)) {         req.flash("error", "You are not the Owner of this Listing");         return res.redirect(`/listings/${id}`);     };
+88. listing validation & reviews validation moved to the middleware part 
+
+    authorization for reviews::
+
+89. added author in schema of review ;created middleware to check is author used in delete and created ; in show.ejs added if else for buttons and review section 
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------phase 3 -----------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------------
+STYLING AND DEPLOYMENT :
+
+
+MVC: model // view //controller 
+    implement design pattern for listings
+
+    models -> store database models  {DATABASE}
+    views -> store info to render    {FROENTEND}
+    controllers -> backend           {BACKEND}
+
+90.we have to move all async functions in seperate folder controller 
+91.created listings.js in controller moved all async functions to the controller ; required controller in app.js ; 
+92.similar for reviews and users
+
+---------------------------------------------------------------------------------------------------------
+Router.route
+
+93. transfer all things from listing.js and user route in router.route form 
+94.in place of slider using star rating by https://github.com/lunarlogic/starability including library 
+95. image upload ->  
+    |current form do not store data in backend ->{form capable of sending files}
+    |mongoDB store files using BSON but theres limit of size ->{3 rd party services  -> link -> mongoDB}
+    |
+    |    Manipulating Form
+    |        enctype="multipart/form-data"
+    |        <div class="mb-3">
+    |        <label for="image" class="form-label">Upload Image</label>
+    |        <input name="listing [image]" type="file" class="form-control" />
+    |        </div>
+    _______________________________________________________________________________________________________
+96. in new.ejs enctype="multipart/form-data" for post route ;required multer and uploads in listing.js 
+97. cloud setup->  cloudinary & .env file -> install dotenv npm package & required ; created .env file with key=value pair 
+98.Store Files->  Multer Store Cloudinary ->npm i cloudinary multer-storage-cloudinary 
+ {FORM(file) ->BACKEND(parser) ->CLOUD(store)->URL(file)->MONGODB(store)}
+    -------------------------------------------------------------------------------------------------
+    |   Save Link in Mongo
+    |   Modify Image in Schema
+    |       {
+    |        id: ObjectId("6531b00b6203b63ebe0d1d7b"),
+    |        title: 'Villa',
+    |        description: 'Great Place' ,
+    |        image: {
+    |           url: 'https://res.cloudinary.com/dxcwlrd0v/image/upload/v1697755147/Delta
+    |           filename: 'Delta/bwpiu2k1vzgnqlcfxmx3'
+    |           }
+    |        price: 2500,
+    |        location: 'California",
+    |        country: 'US' ,
+    |        reviews: [],
+    |        owner: ObjectId("652eaa9c705439e4763001d1"),
+    |        __ v: 0
+    |       }
+    --------------------------------------------------------------------------------------      
+99. change schema for listing added 2 options in image url and filename updated the database usng init index.js updated listing.image to listing.image.url in index and show.ejs 
+100. update edit.ejs to access backend updates edit.ejs so img can be access on edit page also with properties of cloudinary 
+101. to show location oon map ->using mapbox api -> dded cript to seperate div under all review in show.ejs 
+102. map.js file for sotring this function -> ejs template is not accessible here so created script and access it in show.ejs and mapToken accessed to  map.js  
+103. GEOCODING: _>Geocoding is the process of converting addresses (like a street address) into geographic coordinates (like latitude and longitude), which you can use to place markers on a map, or position the map.
+104.github -mapbox/mapbox-sdk-js/docs/services 
+    we want use the services when we want to add new listings so we are going to import it 
+        |const Listing = require("../models/listing");
+        |const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+        |const mapToken=process.env.MAP_TOKEN;
+        |const baseClient = mbxClient({ accessToken: mapToken});
+        
+    -GEOJSON-
+105. added coordinates in schema of listing -access geocordinate in listing.js-> createlisting  
+             <script>
+                const mapToken = "<%= process.env.MAP_TOKEN %>";
+                const listing = <%- JSON.stringify(listing) %>;
+            </script>
+    -MAPMARKER- 
+             const marker = new mapboxgl.Marker({ color: 'red' })
+             .setLngLat(listing.geometry.coordinates)
+             .setPopup(
+                 new mapboxgl.Popup({ offset: 25 }).setHTML(`<h6>${listing.location}</h6><br><p>Exact location provided after booking!`))
+
+             .addTo(map); 
+
+added searchbar ; added search options ; added tax option ; added styling
+
+--------------------------------------------DEPLOYMENT-------------------------
+
+    MONGODB ATLAS:
+
+    cloud database services   DATABASE.Deploy a multi-cloud database 
+
+    mongodb/atlas/mongodb - login - username & pass -create project - create cluster - username password cluster method 
+    in app.js - change path to url in .env  const dbUrl = process.env.ATLASDB_URL; and used in mongoose.connect(dburl)
+
+    mongodb session:-
+        session store - connect mongo
+
+DEPLOYMENT:
+
+    render
+    netlify
+    cyclic
+
+    

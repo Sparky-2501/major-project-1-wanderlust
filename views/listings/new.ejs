@@ -1,0 +1,72 @@
+<% layout("/layouts/boilerplate")%>
+    <% const CATEGORIES=[ "Trending" , "Rooms" , "Iconic cities" , "Mountains" , "Castles" , "Amazing pools" , "Farms"
+        , "Camping" , "Arctic" , "Bed & breakfast" , "Beach" ]; %>
+
+
+
+        <div class="row mt-3">
+            <div class="col-8 offset-2">
+
+                <h3>Create a New Listing</h3>
+
+                <form method="POST" action="/listings" novalidate class="needs-validation"
+                    enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title:</label>
+                        <input type="text" id="title" name="listing[title]" placeholder="add a catchy title" required
+                            class="form-control" />
+                        <div class="valid-feedback">Looks good </div>
+                        <div class="invalid-feedback">Enter valid title</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description:</label>
+                        <textarea id="description" name="listing[description]" class="form-control" required></textarea>
+                        <div class="valid-feedback">Looks good </div>
+                        <div class="invalid-feedback">Enter valid description</div>
+                    </div>
+                    <div class="mb-3">
+  <label for="listingCategory" class="form-label">Category</label>
+  <select name="listing[category]" id="listingCategory" class="form-select" required>
+    <% CATEGORIES.forEach(category => { %>
+      <option 
+        value="<%= category %>" 
+        <%= (typeof listing !== 'undefined' && listing.category === category) ? "selected" : "" %>>
+        <%= category %>
+      </option>
+    <% }) %>
+  </select>
+</div>
+
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Upload image:</label>
+                        <input type="file" id="image" name="listing[image]" class="form-control" />
+                    </div>
+                    <div class="row ">
+                        <div class="mb-3 col-md-4">
+                            <label for="price" class="form-label">Price (in INR):</label>
+                            <input type="number" id="price" name="listing[price]" placeholder="12000"
+                                class="form-control" required />
+                            <div class="valid-feedback">Looks good </div>
+                            <div class="invalid-feedback">Enter valid price !</div>
+                        </div>
+                        <div class="mb-3 col-md-8">
+                            <label for="country" class="form-label">Country:</label>
+                            <input type="text" id="country" name="listing[country]" placeholder="india"
+                                class="form-control" required />
+                            <div class="valid-feedback">Looks good </div>
+                            <div class="invalid-feedback">Enter valid country</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location:</label>
+                        <input type="text" id="location" name="listing[location]" placeholder="talegaon,pune"
+                            class="form-control" required />
+                        <div class="valid-feedback">Looks good </div>
+                        <div class="invalid-feedback">Enter valid location!</div>
+                    </div>
+                    <button type="submit" class="btn btn-dark edit-btn mt-3 mb-3">Create Listing</button>
+
+                </form>
+
+            </div>
+        </div>
