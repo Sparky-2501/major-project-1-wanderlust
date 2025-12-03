@@ -444,4 +444,8 @@ DEPLOYMENT:
     netlify
     cyclic
 
+push code on github using git services (hide all .envs )
+render new web services - npm i - node app.js 
+deploy fail => added environment +  whitelist all ips - manual deploy - clear cache and redeploy
+ 
     
